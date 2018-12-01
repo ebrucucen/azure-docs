@@ -79,12 +79,13 @@ In the following command, substitute your own unique function app name where you
 az functionapp create --name <function_app> --storage-account  <general_storage_account>  \
 --resource-group myResourceGroup --consumption-plan-location westcentralus
 ```
+This commands creates Application Settings to be shared across all functions hosted on this Function App. It will map `AzureWebJobsStorage` setting to the `<general_storage_account>` account you provided, and the `FUNCTIONS_EXTENSION_VERSION` with a value `=~2` setting so that it will run on version 2.x of the Azure Functions runtime.
 
-Now you must configure the function app to connect to the Blob storage account you created in the [previous tutorial][previous-tutorial].
+Next, you can configure the function app to connect to the Blob storage account you created in the [previous tutorial][previous-tutorial].
 
 ## Configure the function app
 
-The function needs the connection string to connect to the Blob storage account. The function code that you deploy to Azure in the following step looks for the connection string in the app setting BLOB_STORAGE_CONNECTION_STRING, and it looks for the thumbnail image container name in app setting THUMBNAIL_CONTAINER_NAME. Get the connection string with the [az storage account show-connection-string](/cli/azure/storage/account#show-connection-string) command. Set application settings with the [az functionapp config appsettings set](/cli/azure/functionapp/config/appsettings#set) command.
+The function needs the connection string to connect to the Blob storage account. The function code that you deploy to Azure in the following step looks for the connection string in the app setting `BLOB_STORAGE_CONNECTION_STRING`, and it looks for the thumbnail image container name in app setting `THUMBNAIL_CONTAINER_NAME`. Get the connection string with the [az storage account show-connection-string](/cli/azure/storage/account#show-connection-string) command. Set application settings with the [az functionapp config appsettings set](/cli/azure/functionapp/config/appsettings#set) command.
 
 In the following CLI commands, `<blob_storage_account>` is the name of the Blob storage account you created in the previous tutorial. Modify the `THUMBNAIL_WIDTH` property for the image width.
 
@@ -96,10 +97,8 @@ storageConnectionString=$(az storage account show-connection-string \
 az functionapp config appsettings set --name <function_app> \
 --resource-group myResourceGroup \
 --settings BLOB_STORAGE_CONNECTION_STRING=$storageConnectionString \
-THUMBNAIL_WIDTH=55 THUMBNAIL_CONTAINER_NAME=thumbnails FUNCTIONS_EXTENSION_VERSION=~2
+THUMBNAIL_WIDTH=55 THUMBNAIL_CONTAINER_NAME=thumbnails
 ```
-
-The `FUNCTIONS_EXTENSION_VERSION=~2` setting makes the function app run on version 2.x of the Azure Functions runtime.
 
 You can now deploy a function code project to this function app.
 
